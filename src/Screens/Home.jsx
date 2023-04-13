@@ -61,7 +61,7 @@ export default function Home({navigation}) {
       ))}
     </BottomSheet>
 <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between",alignItems:"center",marginTop:rp(5)}}>
-   <Text style={{fontSize:rp(5),fontFamily:fonts.Nextrabold}}>Just Golf!</Text>
+   <Text style={{fontSize:rp(5),fontFamily:fonts.Nextrabold}}>JustGolf!</Text>
   <Pressable onPress={()=>setIsVisible(true)}>
   <IonicIcon name="filter-sharp" size={30} color={colors.black} />
   </Pressable>

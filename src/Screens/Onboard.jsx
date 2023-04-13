@@ -10,7 +10,7 @@ export default function Onboard({navigation}) {
   return (
     <View style={styles.mnonb}>
       <Image resizeMode='contain' style={{height:rp(30) ,width:"90%"}} source={require("../../assets/images/splashicon.png")}/>
-        <Text style={styles.headtext}>JUST GOLF!</Text>
+        <Text style={styles.headtext}>JUSTGOLF!</Text>
         <Text style={styles.desc}>
         Improve your golf skills with us by enrolling in our courses and chat with other golfers.
         </Text>

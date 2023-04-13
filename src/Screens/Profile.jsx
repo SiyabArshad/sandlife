@@ -20,14 +20,6 @@ export default function Profile({navigation}) {
           <Text style={{color:colors.black,fontFamily:fonts.Nextrabold,fontSize:rp(3),marginTop:rp(1)}}>Ahmed Ppik</Text>
           <Text style={{color:colors.black,fontFamily:fonts.Nregular}}>ahmedppik99@gmail.com</Text>
       </View>
-      <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between",alignItems:"center",marginTop:rp(2)}}>
-          <Text style={{fontFamily:fonts.Nregular,fontSize:rp(2.3),color:colors.black}}>Dark mode</Text>
-          <Re.Switch
-          color={colors.black}
-      value={isdark}
-      onValueChange={(value) => setisdark(value)}
-    />
-         </View>
       <View style={{marginTop:rp(2)}}>
             <Pressable onPress={()=>navigation.navigate("edit")} style={{backgroundColor:colors.black,paddingHorizontal:rp(2),paddingVertical:rp(1.3),borderRadius:rp(1),marginBottom:rp(1),display:"flex",flexDirection:"row",alignItems:"center"}}>
             <FIcon name="edit" size={20} color={colors.white} />
@@ -36,6 +28,10 @@ export default function Profile({navigation}) {
             <Pressable onPress={()=>navigation.navigate("premium")} style={{backgroundColor:colors.black,paddingHorizontal:rp(2),paddingVertical:rp(1.3),borderRadius:rp(1),marginBottom:rp(1),display:"flex",flexDirection:"row",alignItems:"center"}}>
             <IonicIcon name="card" size={20} color={colors.white} />
               <Text style={{color:colors.white,fontSize:rp(2.3),fontFamily:fonts.Nmedium,marginLeft:rp(2)}}>Upgrade Account</Text>
+            </Pressable>
+            <Pressable onPress={()=>navigation.navigate("about")} style={{backgroundColor:colors.black,paddingHorizontal:rp(2),paddingVertical:rp(1.3),borderRadius:rp(1),marginBottom:rp(1),display:"flex",flexDirection:"row",alignItems:"center"}}>
+            <EIcon name="info" size={20} color={colors.white} />
+              <Text style={{color:colors.white,fontSize:rp(2.3),fontFamily:fonts.Nmedium,marginLeft:rp(2)}}>About us</Text>
             </Pressable>
             <Pressable style={{backgroundColor:colors.black,paddingHorizontal:rp(2),paddingVertical:rp(1.3),borderRadius:rp(1),marginBottom:rp(1),display:"flex",flexDirection:"row",alignItems:"center"}}>
             <EIcon name="share" size={20} color={colors.white} />

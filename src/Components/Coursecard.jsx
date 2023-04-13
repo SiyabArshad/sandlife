@@ -8,7 +8,7 @@ import IonicIcon from 'react-native-vector-icons/Ionicons';
 export default function Coursecard({detail,navigation}) {
   const [enroll,setenroll]=React.useState(false)
     return (
-    <TouchableOpacity onPress={()=>navigation.navigate("course")} style={{width:"46%",marginRight:rp(1),overflow:"hidden",marginBottom:rp(1)}}>
+    <TouchableOpacity onPress={()=>navigation.navigate("course",{coursedata:detail})} style={{width:"46%",marginRight:rp(1),overflow:"hidden",marginBottom:rp(1)}}>
       <Image resizeMode='cover' style={{width:"100%",height:180,borderRadius:rp(1)}} source={detail?.picture}/>
       <Text style={{marginTop:rp(1),color:colors.black,fontFamily:fonts.Nbold,fontSize:rp(2.2)}}>{detail?.club}</Text>
       <IonicIcon style={{position:"absolute",right:5,top:5}} name="checkmark-done-circle" size={24} color={colors.green} />

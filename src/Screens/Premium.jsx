@@ -21,8 +21,9 @@ export default function Premium({navigation}) {
     <ScrollView showsVerticalScrollIndicator={false}>    
     <View style={{height:200,width:"100%",display:"flex",justifyContent:"center",alignItems:"center"}}>
         <View style={{display:"flex",justifyContent:"center",alignItems:"center",backgroundColor:colors.black,paddingHorizontal:rp(2),paddingVertical:rp(1),width:150,height:120,borderRadius:rp(1)}}>
-            <Text style={{color:colors.white,fontSize:rp(2.5),fontFamily:fonts.Nextrabold}}>$25</Text>
-            <Text style={{color:colors.white,fontSize:rp(2.5),fontFamily:fonts.Nbold}}>Per Month</Text>
+            <Text style={{color:colors.white,fontSize:rp(2.5),fontFamily:fonts.Nextrabold}}>$45</Text>
+            <Text style={{color:colors.white,fontSize:rp(2.5),fontFamily:fonts.Nbold}}>Annual</Text>
+            <Text style={{color:colors.white,fontSize:rp(2.5),fontFamily:fonts.Nbold}}>Subscription</Text>
         </View>
     </View>
     <View style={{marginVertical:rp(3)}}>
@@ -47,7 +48,7 @@ export default function Premium({navigation}) {
                 "\n"
             }
             {
-              "Other benefits of being a premium user include access to exclusive discounts and offers on golf equipment, as well as priority support from the JustGolf team. This means that if you ever have any issues or questions, you can be sure that you will receive prompt and personalized support from the app's dedicated team."
+              "Other benefits of being a premium user include access to exclusive discounts and offers on golf Courses, as well as priority support from the JustGolf team. This means that if you ever have any issues or questions, you can be sure that you will receive prompt and personalized support from the app's dedicated team."
               }
             {
                 "\n"

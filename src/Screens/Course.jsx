@@ -12,7 +12,8 @@ import MessageCard from '../Components/MessageCard';
 
 const hi=Dimensions.get("window").height
 const wi=Dimensions.get("window").width
-export default function Course({navigation}) {
+export default function Course({navigation,route}) {
+    const coursedetails=route.params.coursedata
     const [isload,setisload]=React.useState(false)
     const [issubmit,setissubmit]=React.useState(false)
     const [Error,setError]=React.useState('')
@@ -42,7 +43,7 @@ export default function Course({navigation}) {
       <ImageBackground
       resizeMode='cover'
       style={{height:hi/2,width:"100%",display:"flex",flexDirection:"column",justifyContent:"space-between",overflow:"hidden"}} 
-      source={require("../../assets/images/clubs/club2.png")}
+      source={coursedetails?.picture}
       >
         <View style={{display:"flex",flexDirection:"row",marginTop:rp(4),marginLeft:rp(2)}}>
         <TouchableOpacity onPress={()=>navigation.pop()}>
@@ -50,7 +51,7 @@ export default function Course({navigation}) {
         </TouchableOpacity>
         </View>
         <View style={{marginBottom:rp(4),marginLeft:rp(2)}}>
-            <Text style={{color:colors.white,fontSize:rp(3),fontFamily:fonts.Nextrabold}}>Alphabet Pre-shot Routein</Text>
+            <Text style={{color:colors.white,fontSize:rp(3),fontFamily:fonts.Nextrabold}}>{coursedetails?.course}</Text>
         </View>
         </ImageBackground>
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -66,7 +67,7 @@ export default function Course({navigation}) {
             </View>
             <View style={styles.centertext}>
                 <FIcon name='activity' size={24} color={colors.black}/>
-                <Text style={{marginTop:5,color:colors.black,fontSize:rp(2.2)}}>Easy</Text>
+                <Text style={{marginTop:5,color:colors.black,fontSize:rp(2.2)}}>{coursedetails?.difficulty}</Text>
             </View>
 
         </View>
@@ -86,8 +87,9 @@ export default function Course({navigation}) {
                     About
             </Text>
             <Text style={{color:colors.black,fontFamily:fonts.Nregular,textAlign:"justify"}}>
-            This is the definitive routine for getting you to think and feel your best under all kinds of pressure. 
-The result? More confidence, more focus, lower scores.
+                {
+                    `${coursedetails?.club} ${coursedetails?.course}`
+                }
             </Text>
         </View>
 

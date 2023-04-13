@@ -1,38 +1,41 @@
 const golfCourses = [
     {
       club: "Long Meadow Country Club",
-      course:"Tewksbury Massachusetts - Medium",
-      picture: require("../../assets/images/clubs/clubpic.png")
-
+      course:"Tewksbury Massachusetts",
+      picture: require("../../assets/images/clubs/Massachusetts/1.jpeg"),
+      difficulty:"Medium"
     },
     {
-        club: "Vesper",
-        course:"Tyngsborough Massachusetts - Advanced",
-        picture: require("../../assets/images/clubs/club3.png")
-
+      club: "Vesper country club",
+      course:"Tyngsborough Massachusetts",
+      picture: require("../../assets/images/clubs/Massachusetts/2.jpeg"),
+      difficulty:"Advanced"
     },
-      {
-        club: "Chelmsford Country Club",
-        course:"Chelmsford Massachusetts - Easy",
-        picture: require("../../assets/images/clubs/clubpic.png")
-
+    {
+      club: "Groton Country Club",
+      course:"Groton, Massachusetts",
+      picture: require("../../assets/images/clubs/Massachusetts/3.jpeg"),
+      difficulty:"Medium"
     },
-      {
-        club: "Trull Brook Country Club",
-        course:"Lowell, Massachusetts",
-        picture: require("../../assets/images/clubs/club2.png")
-
+    {
+      club: "Chelmsford Country Club",
+      course:"Chelmsford Massachusetts",
+      picture: require("../../assets/images/clubs/Massachusetts/4.jpeg"),
+      difficulty:"Easy"
     },
-      {
-        club: "Butterbrook country club",
-        course:"Westford, Massachusetts",
-        picture: require("../../assets/images/clubs/club3.png")
-
+    {
+      club: "Trull Brook Golf Course",
+      course:"Lowell, Massachusetts",
+      picture: require("../../assets/images/clubs/Massachusetts/5.jpeg"),
+      difficulty:"Medium"
     },
-      {
-        club: "Redtail Golf club",
-        course:"devens Massachuse",
-        picture: require("../../assets/images/clubs/club2.png")
-      }        
+    {
+      club: "Butterbrook Golf club",
+      course:"Westford, Massachusetts",
+      picture: require("../../assets/images/clubs/Massachusetts/2.jpeg"),
+      difficulty:"Medium"
+    }
   ];
 export default golfCourses  
+
+
