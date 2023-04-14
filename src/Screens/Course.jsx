@@ -58,7 +58,7 @@ export default function Course({navigation,route}) {
         <View style={{display:"flex",flexDirection:"row",justifyContent:"space-around",alignItems:"center",marginVertical:rp(2)}}>
             <View style={styles.centertext}>
                 <IonicIcon name='location' size={24} color={colors.black}/>
-                <Text style={{marginTop:5,color:colors.black,fontSize:rp(2.2)}}>NewYork</Text>
+                <Text style={{marginTop:5,color:colors.black,fontSize:rp(2.2)}}>{coursedetails?.location}</Text>
             </View>
 
             <View style={styles.centertext}>

@@ -9,13 +9,13 @@ import IonicIcon from 'react-native-vector-icons/Ionicons';
 export default function Onboard({navigation}) {
   return (
     <View style={styles.mnonb}>
-      <Image resizeMode='contain' style={{height:rp(30) ,width:"90%"}} source={require("../../assets/images/splashicon.png")}/>
-        <Text style={styles.headtext}>JUSTGOLF!</Text>
+      <Image resizeMode='contain' style={{height:rp(35) ,width:"90%"}} source={require("../../assets/images/icons.png")}/>
+        {/* <Text style={styles.headtext}>JUSTGOLF!</Text> */}
         <Text style={styles.desc}>
-        Improve your golf skills with us by enrolling in our courses and chat with other golfers.
+        Connect with local golfers, increase your skills, and enjoy your experience with the JustGolf community!
         </Text>
         <Pressable onPress={()=>navigation.navigate("login")} style={[styles.centertext,styles.btn]}>
-        <IonicIcon name="arrow-forward" size={30} color={colors.green} />
+        <IonicIcon name="arrow-forward" size={30} color={colors.white} />
         </Pressable>
     </View>
   )
@@ -27,7 +27,7 @@ mnonb:{
     display:"flex",
     alignItems:"center",
     justifyContent:"center",
-    backgroundColor:colors.green
+    backgroundColor:colors.white
 },
 centertext:{
     display:"flex",
@@ -40,15 +40,15 @@ headtext:{
     ,color:colors.white
 },
 desc:{
-    width:"60%",
+    width:"70%",
     marginTop:rp(1),
     textAlign:"center",
-    color:colors.white,
+    color:colors.green,
     fontFamily:fonts.Nlight,
     fontSize:rp(2.3)
 },
 btn:{
-    backgroundColor:colors.white,
+    backgroundColor:colors.green,
     marginTop:rp(3),
     height:60,
     width:60,
