@@ -1,6 +1,5 @@
 import { View, Text,Modal,TouchableOpacity,Pressable,Image,StyleSheet,ImageBackground,Dimensions,Platform,Linking,ActivityIndicator,TextInput,ScrollView,FlatList } from 'react-native'
 import React from 'react'
-import LottieView from 'lottie-react-native';
 import fonts from "../configs/fonts"
 import colors from '../configs/colors'
 import { RFPercentage as rp, RFValue as rf } from "react-native-responsive-fontsize";
@@ -64,16 +63,16 @@ export default function Forgotpass({navigation}) {
      </View>
      <View style={{marginTop:rp(8),marginHorizontal:rp(2)}}>
      <View style={{marginBottom:rp(7)}}>
-        <Text style={styles.lable}>Email</Text>
-        <TextInput 
+        <TextInput
+        placeholder='Email'
         value={email} onChangeText={(e)=>setemail(e)}
-        style={{marginTop:rp(1),borderBottomWidth:1,borderBottomColor:colors.black,paddingHorizontal:rp(1.2),paddingVertical:rp(.6),color:colors.black,fontFamily:fonts.Rregular}}/>
+        style={{marginTop:rp(1),borderBottomWidth:1,borderBottomColor:colors.black,paddingHorizontal:rp(1),paddingVertical:rp(1.6),color:colors.black,fontFamily:fonts.Rregular}} />
      </View>
      </View>
      <View style={[{marginBottom:rp(5),zIndex:999},styles.centertext]}>
                 <Pressable 
                 disabled={issubmit} 
-                onPress={handleform} style={{backgroundColor:colors.black,paddingHorizontal:rp(8),paddingVertical:rp(1),borderRadius:rp(3)}}>
+                onPress={handleform} style={{backgroundColor:colors.primary,paddingHorizontal:rp(8),paddingVertical:rp(1),borderRadius:rp(3)}}>
                     {
                         isload?
                         <ActivityIndicator size={30} color={colors.white}/>
@@ -82,15 +81,6 @@ export default function Forgotpass({navigation}) {
                     }
                 </Pressable>
      </View>
-     <Image 
-     style={{
-        position:"absolute",
-       top:rp(34),
-       left:-20,
-       zIndex:-9
-     }}
-     resizeMode='contain'
-     source={require("../../assets/images/Uniondesign.png")}/>     
     </ScrollView>
   )
 }
@@ -106,13 +96,13 @@ const styles=StyleSheet.create({
         justifyContent:"center",
     },
     btn:{
-        backgroundColor:colors.black,
+        backgroundColor:colors.primary,
         paddingHorizontal:5,
         paddingVertical:4,
         borderRadius:5
     },
     text1:{
-        color:colors.black,
+        color:colors.primary,
         fontFamily:fonts.Nextrabold,
         fontSize:rp(5)
     },

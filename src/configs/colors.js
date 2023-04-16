@@ -5,7 +5,9 @@ const colors= {
     textgrey:"#565656",
     textgrey2:"#6B6B6B",
     red:"#FF004D",
-    grey:"#222222"
+    grey:"#222222",
+    secondary:"#FFE9E8",
+    primary:"#EB3738",
 };
 
 export default colors;

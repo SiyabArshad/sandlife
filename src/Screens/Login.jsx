@@ -1,12 +1,11 @@
 import { View, Text,Modal,TouchableOpacity,Pressable,Image,StyleSheet,ImageBackground,Dimensions,Platform,Linking,ActivityIndicator,TextInput,ScrollView,FlatList } from 'react-native'
 import React from 'react'
-import LottieView from 'lottie-react-native';
 import fonts from "../configs/fonts"
 import colors from '../configs/colors'
 import { RFPercentage as rp, RFValue as rf } from "react-native-responsive-fontsize";
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import MessageCard from '../Components/MessageCard';
-
+import BloodGroup from '../Components/BloodGroup';
 export default function Login({navigation}) {
     const[email,setemail]=React.useState("")
     const[password,setpassword]=React.useState("")
@@ -18,24 +17,17 @@ export default function Login({navigation}) {
         setisload(true)
         setissubmit(true)
         try{
-            if(email.length===0&&password.length===0)
-            {
-            setError("Some Feilds are Missing")
-            setisload(false)
-            settype(false)
-            }
             if(email.length>10&&password.length>5){
-
-                setError("Logged in Successfully")
+                setissubmit(false)
                 setisload(false)
-                settype(true)
+                navigation.navigate("home")    
             }
             else
             {
-                setError("Invalid Credentials")
+                setError("Incomplete Credentials")
                 setisload(false)
                 settype(false)
-           
+                
             }
         }
         catch{
@@ -59,26 +51,28 @@ export default function Login({navigation}) {
      </View>
      <View style={{marginVertical:rp(5),marginHorizontal:rp(2)}}>
      <Text style={styles.text1}>
-       Welcome Back!
+       {" "}Welcome Back!
      </Text>
-     <Text style={styles.text2}>Enter Your Email and Password</Text>
      </View>
-     <View style={{marginTop:rp(8),marginHorizontal:rp(2)}}>
-     <View style={{marginBottom:rp(7)}}>
-        <Text style={styles.lable}>Email</Text>
-        <TextInput 
+     <View style={{marginTop:rp(2),marginHorizontal:rp(2)}}>
+     <View style={{marginBottom:rp(3)}}>
+        <TextInput
+        placeholder='Email'
         value={email} onChangeText={(e)=>setemail(e)}
-        style={{marginTop:rp(1),borderBottomWidth:1,borderBottomColor:colors.black,paddingHorizontal:rp(1.2),paddingVertical:rp(.6),color:colors.black,fontFamily:fonts.Rregular}}/>
+        style={{marginTop:rp(1),borderBottomWidth:1,borderBottomColor:colors.black,paddingHorizontal:rp(1),paddingVertical:rp(1.6),color:colors.black,fontFamily:fonts.Rregular}} />
      </View>
-     <View style={{marginBottom:rp(7)}}>
-        <Text style={styles.lable}>Password</Text>
-        <TextInput secureTextEntry value={password} onChangeText={(e)=>setpassword(e)} style={{marginTop:rp(1),borderBottomWidth:1,borderBottomColor:colors.black,paddingHorizontal:rp(1.2),paddingVertical:rp(.6),color:colors.black,fontFamily:fonts.Rregular}}/>
+     <View style={{marginBottom:rp(3)}}>
+        <TextInput
+        secureTextEntry
+        placeholder='Password'
+        value={password} onChangeText={(e)=>setpassword(e)}
+        style={{marginTop:rp(1),borderBottomWidth:1,borderBottomColor:colors.black,paddingHorizontal:rp(1),paddingVertical:rp(1.6),color:colors.black,fontFamily:fonts.Rregular}} />
      </View>
      </View>
-     <View style={[{marginBottom:rp(5),zIndex:999},styles.centertext]}>
+     <View style={[{marginVertical:rp(5),zIndex:999},styles.centertext]}>
                 <Pressable 
                 disabled={issubmit} 
-                onPress={()=>navigation.navigate("home")} style={{backgroundColor:colors.black,paddingHorizontal:rp(8),paddingVertical:rp(1),borderRadius:rp(3)}}>
+                onPress={handleform} style={{backgroundColor:colors.primary,paddingHorizontal:rp(8),paddingVertical:rp(1),borderRadius:rp(3)}}>
                    {
                         isload?
                         <ActivityIndicator size={30} color={colors.white}/>
@@ -88,24 +82,10 @@ export default function Login({navigation}) {
                 </Pressable>
                 <Pressable onPress={()=>navigation.navigate("forgot")} style={{marginTop:rp(3)}}>
                     <Text style={{fontFamily:fonts.Nregular,fontSize:rp(2.5),color:colors.textgrey}}>
-                    Forgotten Password?
-                    </Text>
-                </Pressable>
-                <Pressable onPress={()=>navigation.navigate("signup")} style={{marginTop:rp(.3)}}>
-                    <Text style={{fontFamily:fonts.Nregular,fontSize:rp(2.5),color:colors.textgrey}}>
-                    or Create a New Account?
+                    Forgot Password?
                     </Text>
                 </Pressable>
      </View>
-     <Image 
-     style={{
-        position:"absolute",
-       top:rp(34),
-       left:-20,
-       zIndex:-9
-     }}
-     resizeMode='contain'
-     source={require("../../assets/images/Uniondesign.png")}/>     
     </ScrollView>
   )
 }
@@ -121,13 +101,13 @@ const styles=StyleSheet.create({
         justifyContent:"center",
     },
     btn:{
-        backgroundColor:colors.black,
+        backgroundColor:colors.primary,
         paddingHorizontal:5,
         paddingVertical:4,
         borderRadius:5
     },
     text1:{
-        color:colors.black,
+        color:colors.primary,
         fontFamily:fonts.Nextrabold,
         fontSize:rp(5)
     },
