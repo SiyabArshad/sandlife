@@ -6,7 +6,22 @@ import { RFPercentage as rp, RFValue as rf } from "react-native-responsive-fonts
 import IonicIcon from 'react-native-vector-icons/Ionicons';
 import MessageCard from '../Components/MessageCard';
 import BloodGroup from '../Components/BloodGroup';
+import {createUserWithEmailAndPassword,getAuth,deleteUser,updateProfile,sendEmailVerification} from "firebase/auth"
+import {doc,setDoc,getFirestore, addDoc, serverTimestamp} from "firebase/firestore"
+import app from '../configs/firebase';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 export default function Signup({navigation}) {
+    const db=getFirestore(app)
+    const auth=getAuth(app)
     const[email,setemail]=React.useState("")
     const[password,setpassword]=React.useState("")
     const[name,setname]=React.useState("")
@@ -19,28 +34,43 @@ export default function Signup({navigation}) {
     const [issubmit,setissubmit]=React.useState(false)
     const [Error,setError]=React.useState('')
     const [type,settype]=React.useState(false)
+    const [loading,setloading]=React.useState(false)
+    const [deviceToken,setDeviceToken]=React.useState("")
     const handleform=async()=>{
         setisload(true)
-        setissubmit(true)
+        
         try{
-            if(email.length>10&&password.length>5&&name.length>3&&id.length>10&&phone.length>=9&&address.length>10&&bloodgroup.length>1){
-
+            if(email.length>5&&password.length>5){
+                const newuser = await createUserWithEmailAndPassword(auth, email, password);
+                const newdoc = await setDoc(doc(db, "users", newuser.user.uid), {
+                  userid: newuser.user.uid,
+                  name: name,
+                  email: email,
+                  phone: phone,
+                  address: address,
+                  age: age,
+                    personid:id,
+                    bloodgroup:bloodgroup,
+                    token:deviceToken
+                });
                 setError("Registered Successfully")
-                setisload(false)
                 settype(true)
             }
             else
             {
                 setError("Incomplete Credentials")
-                setisload(false)
                 settype(false)
            
             }
         }
         catch{
             setError("Try again later")
-            setisload(false)
             settype(false)
+           
+        }
+        finally{
+            setisload(false)
+            setissubmit(true)
            
         }
     }
@@ -50,6 +80,61 @@ export default function Signup({navigation}) {
     const callblodgroup=(state)=>{
         setbloodgroup(state)
     }
+    const gettoken=async()=>{
+        setloading(true)
+        try{
+            registerForPushNotificationsAsync().then(token => setDeviceToken(token));
+        }
+        catch(e){
+            console.log(e)
+        }
+        finally{
+            setloading(false)
+        }
+    }
+    React.useEffect(()=>{
+     gettoken()   
+    },[])
+    async function registerForPushNotificationsAsync() {
+        let token;
+      
+        if (Platform.OS === 'android') {
+          await Notifications.setNotificationChannelAsync('default', {
+            name: 'default',
+            importance: Notifications.AndroidImportance.MAX,
+            vibrationPattern: [0, 250, 250, 250],
+            lightColor: '#FF231F7C',
+          });
+        }
+      
+        if (Device.isDevice) {
+          const { status: existingStatus } = await Notifications.getPermissionsAsync();
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Notifications.requestPermissionsAsync();
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+          }
+          token = (await Notifications.getExpoPushTokenAsync()).data;
+       
+        } else {
+          alert('Must use physical device for Push Notifications');
+        }
+      
+        return token;
+      }
+      
+if(loading)
+{
+    return (
+        <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
+            <ActivityIndicator size={24} color={colors.primary}/>
+        </View>
+    )
+}
   return (
     <ScrollView style={styles.mnonb} showsVerticalScrollIndicator={false}>
      <MessageCard type={type} message={Error} show={issubmit} callshow={callbacksubmit}/>

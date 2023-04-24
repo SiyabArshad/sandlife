@@ -64,7 +64,7 @@ const callbacksubmit=()=>{
           <Text style={{fontFamily:fonts.Nregular,fontSize:18}}>Create Request</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView style={{height:"80%"}} showsVerticalScrollIndicator={false}>
        {
         tab==="request"?
         <>
