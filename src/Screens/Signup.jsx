@@ -9,16 +9,8 @@ import BloodGroup from '../Components/BloodGroup';
 import {createUserWithEmailAndPassword,getAuth,deleteUser,updateProfile,sendEmailVerification} from "firebase/auth"
 import {doc,setDoc,getFirestore, addDoc, serverTimestamp} from "firebase/firestore"
 import app from '../configs/firebase';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
+
 export default function Signup({navigation}) {
     const db=getFirestore(app)
     const auth=getAuth(app)
@@ -34,11 +26,8 @@ export default function Signup({navigation}) {
     const [issubmit,setissubmit]=React.useState(false)
     const [Error,setError]=React.useState('')
     const [type,settype]=React.useState(false)
-    const [loading,setloading]=React.useState(false)
-    const [deviceToken,setDeviceToken]=React.useState("")
     const handleform=async()=>{
         setisload(true)
-        
         try{
             if(email.length>5&&password.length>5){
                 const newuser = await createUserWithEmailAndPassword(auth, email, password);
@@ -50,8 +39,7 @@ export default function Signup({navigation}) {
                   address: address,
                   age: age,
                     personid:id,
-                    bloodgroup:bloodgroup,
-                    token:deviceToken
+                    bloodgroup:bloodgroup
                 });
                 setError("Registered Successfully")
                 settype(true)
@@ -80,61 +68,7 @@ export default function Signup({navigation}) {
     const callblodgroup=(state)=>{
         setbloodgroup(state)
     }
-    const gettoken=async()=>{
-        setloading(true)
-        try{
-            registerForPushNotificationsAsync().then(token => setDeviceToken(token));
-        }
-        catch(e){
-            console.log(e)
-        }
-        finally{
-            setloading(false)
-        }
-    }
-    React.useEffect(()=>{
-     gettoken()   
-    },[])
-    async function registerForPushNotificationsAsync() {
-        let token;
-      
-        if (Platform.OS === 'android') {
-          await Notifications.setNotificationChannelAsync('default', {
-            name: 'default',
-            importance: Notifications.AndroidImportance.MAX,
-            vibrationPattern: [0, 250, 250, 250],
-            lightColor: '#FF231F7C',
-          });
-        }
-      
-        if (Device.isDevice) {
-          const { status: existingStatus } = await Notifications.getPermissionsAsync();
-          let finalStatus = existingStatus;
-          if (existingStatus !== 'granted') {
-            const { status } = await Notifications.requestPermissionsAsync();
-            finalStatus = status;
-          }
-          if (finalStatus !== 'granted') {
-            alert('Failed to get push token for push notification!');
-            return;
-          }
-          token = (await Notifications.getExpoPushTokenAsync()).data;
-       
-        } else {
-          alert('Must use physical device for Push Notifications');
-        }
-      
-        return token;
-      }
-      
-if(loading)
-{
-    return (
-        <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
-            <ActivityIndicator size={24} color={colors.primary}/>
-        </View>
-    )
-}
+
   return (
     <ScrollView style={styles.mnonb} showsVerticalScrollIndicator={false}>
      <MessageCard type={type} message={Error} show={issubmit} callshow={callbacksubmit}/>

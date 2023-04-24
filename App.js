@@ -11,9 +11,10 @@ import Forgotpass from './src/Screens/Forgotpass';
 import Home from './src/Screens/Home';
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { AuthContext,AuthProvider,useAuth } from './src/context/Authentication';
 import colors from './src/configs/colors';
 const Stack = createNativeStackNavigator();
-
+import * as Notifications from 'expo-notifications';
 export default function App() {
   LogBox.ignoreAllLogs()
   const [fontsLoaded, error] = Font.useFonts({
@@ -40,18 +41,30 @@ export default function App() {
     )
   }
   return (
+    <AuthProvider>
     <NavigationContainer >
-    <Stack.Navigator initialroute="onboard" screenOptions={{headerShown:false}} >
-      <Stack.Screen name="onboard" component={Onboard} />
+    <Routes/>
+    </NavigationContainer>
+    </AuthProvider>
+  );
+}
+const Routes=()=>{
+  const {user}=useAuth()
+  return(
+<Stack.Navigator initialroute="onboard" screenOptions={{headerShown:false}} >
+      {
+        user?
+      <Stack.Screen name="home" component={Home}/>
+    :<>
+    <Stack.Screen name="onboard" component={Onboard} />
       <Stack.Screen name='signup' component={Signup}/>
       <Stack.Screen name="login" component={Login} />
       <Stack.Screen name="forgot" component={Forgotpass}/>
-      <Stack.Screen name="home" component={Home}/>
-    </Stack.Navigator>
-    </NavigationContainer>
-  );
+    </>  
+    }
+      </Stack.Navigator>
+  )
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
