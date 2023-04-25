@@ -14,7 +14,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthContext,AuthProvider,useAuth } from './src/context/Authentication';
 import colors from './src/configs/colors';
 const Stack = createNativeStackNavigator();
-import * as Notifications from 'expo-notifications';
 export default function App() {
   LogBox.ignoreAllLogs()
   const [fontsLoaded, error] = Font.useFonts({
@@ -32,6 +31,7 @@ export default function App() {
     'RobotoMono-SemiBold': require('./assets/fonts/RobotoMono-SemiBold.ttf'),
     'RobotoMono-Thin': require('./assets/fonts/RobotoMono-Thin.ttf'),
   });
+  
   if(!fontsLoaded)
   {
     return(
@@ -50,6 +50,7 @@ export default function App() {
 }
 const Routes=()=>{
   const {user}=useAuth()
+  
   return(
 <Stack.Navigator initialroute="onboard" screenOptions={{headerShown:false}} >
       {

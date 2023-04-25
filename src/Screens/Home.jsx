@@ -10,47 +10,31 @@ import BloodGroup from '../Components/BloodGroup';
 import { useAuth } from '../context/Authentication';
 import {doc,setDoc,getFirestore, addDoc, serverTimestamp,query,where,collection, getDocs, getDoc} from "firebase/firestore"
 import app from '../configs/firebase';
-import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
 import { useIsFocused } from '@react-navigation/native';
 export default function Home() {
-  // Set up a notification handler for background notifications
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
-
-// Add a listener for foreground notifications
-Notifications.addNotificationReceivedListener(notification => {
-  // Handle the notification in the foreground
-});
-
-  const db=getFirestore(app)
-  const isFocused = useIsFocused();  
-  const {logout,user}=useAuth()
-  const[name,setname]=React.useState(user&&user?.name||"")
+    const db=getFirestore(app)
+    const isFocused = useIsFocused();  
+    const {logout,user}=useAuth()
+    const[name,setname]=React.useState(user&&user?.name||"")
     const[address,setaddress]=React.useState(user&&user?.address||"") 
     const[phone,setphone]=React.useState(user&&user?.phone||"")
     const[bloodgroup,setbloodgroup]=React.useState(user&&user?.bloodgroup||"")
     const [isload,setisload]=React.useState(false)
     const [isload2,setisload2]=React.useState(false)
+    const [activebtnid,setactivebtnid]=React.useState(-1)
     const [issubmit,setissubmit]=React.useState(false)
     const [Error,setError]=React.useState('')
     const [type,settype]=React.useState(false)
     const [loading,setloading]=React.useState(false)
     const [requests,setrequests]=React.useState([])
-  const[tab,settab]=React.useState("request")
-  const handleform=async()=>{
-    setisload(true)
-    try{
-            const token=await getcurrentuser()
-            console.log(token)
+    const [notifications,setnotifications]=React.useState([])
+    const[tab,settab]=React.useState("request")
+    const handleform=async()=>{
+      setisload(true)
+      try{
+            const userDocref=doc(db,"users",user?.userid)
             await addDoc(collection(db,"requests"),{
-              name,phone,address,bloodgroup,userid:user?.userid,token
+              name,phone,address,bloodgroup,user:userDocref
             })
             setError("Request Craeted Successfully")
             settype(true)
@@ -58,8 +42,7 @@ Notifications.addNotificationReceivedListener(notification => {
         }
     catch(e){
         setError("Try again later")
-        settype(false)
-       
+        settype(false)  
     }
     finally{
       setisload(false)
@@ -75,95 +58,23 @@ const callbacksubmit=()=>{
 }
 
 
-//notifications
-async function registerForPushNotificationsAsync() {
-  let token;
-  if (Device.isDevice) {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-  } else {
-    alert('Must use physical device for Push Notifications');
-  }
-if(token)
-{
-  await setDoc(doc(db, "users", user?.userid), {
-    token
-  },{merge:true});
-  
-}
-  if (Platform.OS === 'android') {
-    Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
-
-  return token;
-}
-const getdatarequests=async()=>{
-  setloading(true)
-  try{
-    const q = query(collection(db, "requests"), where("userid", "!=", user?.userid));
-    const querySnapshot = await getDocs(q);
-    const availablereqs = [];
-    querySnapshot.forEach(async(doc) => {
-      const req = doc.data();
-      req.id = doc.id;
-      availablereqs.push(req);
-    });
-    setrequests(availablereqs);
-  }
-  catch(e){
-    console.log(e)
-  }
-  finally{
-    setloading(false)
-  }
-}
 //ends notifications
 
 //donate blood functions
-const donateblood=async(id,token)=>{
+const donateblood=async(id,userid,index,bg)=>{
   setisload(true)
-  try{
-    // const reqDocRef = doc(db, "requests", id);
-    // await addDoc(collection(db,"donars"),{
-    //     donorid:user?.userid,
-    //     request:reqDocRef,
-    // })
-    let stringnotify=user?.name+" "+"Donates you Blood"
-    await sendPushNotification(token,stringnotify)
-  }
-  catch(e){
-    console.log(e)
-  }
-  finally{
-      setisload(false)
-  }
-}
-//end donate blood functions
-const rejectdoanteblood=async(id,token)=>{
-  setisload(true)
+  setactivebtnid(index)
   try{
     const reqDocRef = doc(db, "requests", id);
-    await addDoc(collection(db,"declineddonars"),{
-        declineid:user?.userid,
-        request:reqDocRef,
+    await addDoc(collection(db,"notifications"),{
+        user:user?.userid,
+        requesterid:userid,
+        name:user?.name,
+        phone:user?.phone,
+        request:id,
+        status:true,
+        bloodgroup:bg
     })
-    let stringnotify=user?.name+" "+"Decline Blood donation"
-    await sendPushNotification(token,stringnotify)
-    
   }
   catch(e){
     console.log(e)
@@ -172,24 +83,80 @@ const rejectdoanteblood=async(id,token)=>{
       setisload(false)
   }
 }
-//reject donation
 
-//end reject donation
-const getcurrentuser = async () => {
+
+//end donate blood functions
+const rejectdoanteblood=async(id,userid,index,bg)=>{
+  setisload2(true)
+  setactivebtnid(index)
+  try{
+    const reqDocRef = doc(db, "requests", id);
+    await addDoc(collection(db,"notifications"),{
+        user:user?.userid,
+        requesterid:userid,
+        name:user?.name,
+        phone:user?.phone,
+        request:id,
+        status:false,
+        bloodgroup:bg
+    })
+  }
+  catch(e){
+    console.log(e)
+  }
+  finally{
+      setisload2(false)
+  }
+}
+const getdatarequests = async () => {
+  setloading(true);
   try {
-    const user = await getDoc(doc(db, "users", user.userid));
-    const info = user.data();
-    return info?.token;
-  } catch (error) {
-    return "";
+    const docref = doc(db, "users", user?.userid);
+    const q = query(collection(db, "requests"), where("user", "!=", docref));
+    const querySnapshot = await getDocs(q);
+    const availablereqs = [];
+
+    for (const doc of querySnapshot.docs) {
+      const req = doc.data();
+      req.id = doc.id;
+      availablereqs.push(req);     
+    }
+
+    setrequests(availablereqs);
+  } catch (e) {
+    console.log("error in getting request", e);
+  } finally {
+    setloading(false);
   }
 };
-React.useEffect(()=>{
-  (()=>registerForPushNotificationsAsync())()
-},[])
-React.useEffect(()=>{
-getdatarequests()
-},[isFocused,tab])     
+
+const getdatanotifications = async () => {
+  setloading(true);
+  try {
+
+    const q = query(collection(db, "notifications")
+    , where("requesterid", "==",doc(db,"users",user?.userid))
+    );
+    const querySnapshot = await getDocs(q);
+    const availablereqs = [];
+
+    for (const doc of querySnapshot.docs) {
+      const req = doc.data();
+      req.id = doc.id;
+      availablereqs.push(req);
+    }
+
+    setnotifications(availablereqs);
+  } catch (e) {
+    console.log("error in getting notifications", e);
+  } finally {
+    setloading(false);
+  }
+};
+React.useEffect(() => {
+  getdatarequests();
+  getdatanotifications()
+}, [isFocused, tab]);
 if(loading)
 {
     return (
@@ -199,7 +166,7 @@ if(loading)
     )
 }
   return (
-    <SafeAreaView style={{flex:1}}>
+    <SafeAreaView style={{flex:1,paddingTop:20}}>
            <MessageCard type={type} message={Error} show={issubmit} callshow={callbacksubmit}/>
            <View style={{paddingHorizontal:rp(2),display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"space-between"}}>
            <Text style={styles.text1}>
@@ -211,16 +178,23 @@ if(loading)
            </View>
      <View style={{paddingHorizontal:rp(3),paddingVertical:rp(2)}}>
       <View style={{marginBottom:rp(2),display:"flex",flexDirection:"row",alignItems:"center"}}>
-        <TouchableOpacity onPress={()=>settab("request")} style={{display:"flex",flexDirection:'row',justifyContent:"center",alignItems:"center",marginRight:10,paddingHorizontal:10,paddingVertical:5,borderBottomWidth:tab==="request"?2:0,borderRadius:tab==="request"?5:0,borderBottomColor:tab==="request"&&colors.primary}}>
-          <Text style={{fontFamily:fonts.Nregular,fontSize:18}}>Requests</Text>
+        <TouchableOpacity onPress={()=>settab("request")} style={{display:"flex",flexDirection:'row',justifyContent:"center",alignItems:"center",
+        marginRight:10,paddingHorizontal:10,paddingVertical:5,borderBottomWidth:tab==="request"?2:0,
+        borderBottomColor:tab==="request"&&colors.primary}}>
+          <Text style={{fontFamily:fonts.Nregular}}>Requests</Text>
         </TouchableOpacity>
-        <TouchableOpacity  onPress={()=>settab("createrequest")} style={{display:"flex",flexDirection:'row',justifyContent:"center",alignItems:"center",paddingHorizontal:10,paddingVertical:5,borderBottomWidth:tab==="createrequest"?2:0,borderBoRadius:tab==="createrequest"?5:0,borderBottomColor:tab==="createrequest"&&colors.primary}}>
-          <Text style={{fontFamily:fonts.Nregular,fontSize:18}}>Create Request</Text>
+        <TouchableOpacity  onPress={()=>settab("createrequest")} style={{display:"flex",flexDirection:'row',justifyContent:"center",alignItems:"center",paddingHorizontal:10,
+        paddingVertical:5,borderBottomWidth:tab==="createrequest"?2:0,borderBottomColor:tab==="createrequest"&&colors.primary}}>
+          <Text style={{fontFamily:fonts.Nregular}}>Create Request</Text>
+        </TouchableOpacity>
+        <TouchableOpacity  onPress={()=>settab("notifications")} style={{display:"flex",flexDirection:'row',justifyContent:"center",alignItems:"center",paddingHorizontal:10,
+        paddingVertical:5,borderBottomWidth:tab==="notifications"?2:0,borderBottomColor:tab==="notifications"&&colors.primary}}>
+          <Text style={{fontFamily:fonts.Nregular}}>Notifications</Text>
         </TouchableOpacity>
       </View>
       <ScrollView style={{height:"80%"}} showsVerticalScrollIndicator={false}>
        {
-        tab==="request"?
+        tab==="request"&&
         <>
         {
           requests&&requests?.length===0?<View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
@@ -245,15 +219,15 @@ if(loading)
                 <Text style={{fontFamily:fonts.Nregular,fontSize:14}}>{item?.bloodgroup}</Text>
               </View>
               <View style={{display:"flex",flexDirection:"row",justifyContent:"space-between",alignItems:"center",marginVertical:rp(2)}}>
-                  <TouchableOpacity onPress={()=>donateblood(item?.id)} style={{width:"49%",backgroundColor:colors.primary,paddingVertical:rp(1),borderRadius:5,display:"flex",justifyContent:"center",alignItems:"center"}}>
+                  <TouchableOpacity onPress={()=>donateblood(item?.id,item?.user,i,item?.bloodgroup)} style={{width:"49%",backgroundColor:colors.primary,paddingVertical:rp(1),borderRadius:5,display:"flex",justifyContent:"center",alignItems:"center"}}>
                    {
-                    isload?<ActivityIndicator size={24} color={colors.white}/>:  <Text style={{color:colors.white,fontFamily:fonts.Nblack}}>Donate</Text>
+                    isload&&activebtnid===i?<ActivityIndicator size={24} color={colors.white}/>:  <Text style={{color:colors.white,fontFamily:fonts.Nblack}}>Donate</Text>
                    }
                   
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={()=>rejectdoanteblood(item?.id)} style={{width:"49%",backgroundColor:colors.primary,paddingVertical:rp(1),borderRadius:5,display:"flex",justifyContent:"center",alignItems:"center"}}>
+                  <TouchableOpacity onPress={()=>rejectdoanteblood(item?.id,item?.user,i,item?.bloodgroup)} style={{width:"49%",backgroundColor:colors.primary,paddingVertical:rp(1),borderRadius:5,display:"flex",justifyContent:"center",alignItems:"center"}}>
                   {
-                    isload2?<ActivityIndicator size={24} color={colors.white}/>:  <Text style={{color:colors.white,fontFamily:fonts.Nblack}}>Decline</Text>
+                    isload2&&activebtnid===i?<ActivityIndicator size={24} color={colors.white}/>:  <Text style={{color:colors.white,fontFamily:fonts.Nblack}}>Decline</Text>
                    }
                   
                   </TouchableOpacity>
@@ -262,7 +236,10 @@ if(loading)
           ))
 }
           </>
-          :
+         }
+         {
+          tab==="createrequest"&&
+
           <>
          <View style={{marginTop:rp(1),marginHorizontal:rp(2)}}>
           <View style={{marginBottom:rp(1)}}>
@@ -306,7 +283,20 @@ if(loading)
           </View>
           </>
          }
-         
+         {
+          tab==="notifications"&&
+          <View style={{flex:1,flexDirection:"column"}}>
+                {
+                  notifications&&notifications?.map((item,i)=>(
+                    <View key={i} style={{backgroundColor:colors.white,borderRadius:5,marginBottom:5,paddingHorizontal:20,paddingVertical:10}}>
+                      <Text style={{fontFamily:fonts.Nblack,marginVertical:5}}>{item?.name}</Text>
+                      <Text style={{marginBottom:5}}>{`Just ${item?.status?"Accepted":"Declined"} your Request of Blood Donation ${item?.bloodgroup}`}</Text>
+                      <Text style={{marginBottom:5,fontFamily:fonts.Nblack}}>{item?.phone}</Text>
+                      </View>
+                  ))
+                }
+          </View>
+         }
         </ScrollView>    
      </View>
     </SafeAreaView>
@@ -347,24 +337,3 @@ const styles=StyleSheet.create({
   }
 })
 
-
-async function sendPushNotification(expoPushToken,data) {
-  const message = {
-    to: expoPushToken,
-    sound: 'default',
-    title: 'SangLife Notification',
-    body: data,
-    data: { someData: 'goes here' },
-  };
-
-  await fetch('https://exp.host/--/api/v2/push/send', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Accept-encoding': 'gzip, deflate',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(message),
-  });
-
-}

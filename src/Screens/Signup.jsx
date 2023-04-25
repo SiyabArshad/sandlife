@@ -51,7 +51,7 @@ export default function Signup({navigation}) {
            
             }
         }
-        catch{
+        catch(e){
             setError("Try again later")
             settype(false)
            
